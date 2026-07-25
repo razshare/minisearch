@@ -1,0 +1,113 @@
+package servers
+
+import (
+	"context"
+	"errors"
+	"log"
+	"net/http"
+	"os"
+	"os/signal"
+	"strings"
+	"syscall"
+	"time"
+
+	"main/lib/core/scopes"
+)
+
+// Start starts a server.
+func Start(options StartOptions) (err error) {
+	cors := options.Cors
+	serverRoutes := options.Routes
+	errorLog := options.ErrorLog
+	certificate := options.Certificate
+	key := options.Key
+	infoLog := options.InfoLog
+	if errorLog == nil {
+		errorLog = log.New(os.Stderr, "[error]: ", log.Ldate|log.Ltime)
+	}
+	if infoLog == nil {
+		infoLog = log.New(os.Stdout, "[info]: ", log.Ldate|log.Ltime)
+	}
+	if options.Address == "" {
+		options.Address = "0.0.0.0:8080"
+	}
+	if options.ReadTimeout <= 0 {
+		options.ReadTimeout = 30 * time.Second
+	}
+	if options.WriteTimeout <= 0 {
+		options.WriteTimeout = 30 * time.Second
+	}
+	if options.MaxHeaderBytes <= 0 {
+		options.MaxHeaderBytes = 1024 * 1024 * 2 //2MB
+	}
+	server := &http.Server{
+		Addr:           options.Address,
+		Handler:        http.NewServeMux(),
+		ReadTimeout:    options.ReadTimeout,
+		WriteTimeout:   options.WriteTimeout,
+		MaxHeaderBytes: options.MaxHeaderBytes,
+		ErrorLog:       errorLog,
+	}
+	background := context.Background()
+	sigctx, stop := signal.NotifyContext(background, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
+	defer stop()
+	go func() {
+		<-sigctx.Done()
+		infoLog.Println("shutting server down gracefully...")
+		if cerr := server.Close(); cerr != nil {
+			if err == nil {
+				err = cerr
+			}
+			return
+		}
+	}()
+	handler := server.Handler.(*http.ServeMux)
+	for _, route := range serverRoutes {
+		scope := scopes.Scope{}
+		handler.HandleFunc(route.Pattern, func(writer http.ResponseWriter, request *http.Request) {
+			if errLocal := cors.Check(request); errLocal != nil {
+				server.ErrorLog.Printf(
+					"servers.Start: CORS check failed: %v",
+					errLocal,
+				)
+				return
+			}
+			for _, guard := range route.Guards {
+				var allow bool
+				if guard.Handler(scope, request, writer, func() { allow = true }); !allow {
+					if guard.Name == "" {
+						infoLog.Printf("an unnamed guard blocked the request on route %s", route.Pattern)
+					} else {
+						infoLog.Printf("guard %s blocked the request on route %s", guard.Name, route.Pattern)
+					}
+					return
+				}
+			}
+			route.Handler(scope, request, writer)
+		})
+	}
+	if certificate != "" && key != "" {
+		address := strings.Replace(server.Addr, "0.0.0.0:", "127.0.0.1:", 1)
+		infoLog.Printf("server bound to address %s; visit your application at https://%s", server.Addr, address)
+		if err = server.ListenAndServeTLS(certificate, key); err != nil {
+			if errors.Is(err, http.ErrServerClosed) {
+				err = nil
+				infoLog.Println("shutting down server")
+				return
+			}
+			return
+		}
+	} else {
+		address := strings.Replace(server.Addr, "0.0.0.0:", "127.0.0.1:", 1)
+		infoLog.Printf("server bound to address %s; visit your application at http://%s", server.Addr, address)
+		if err = server.ListenAndServe(); err != nil {
+			if errors.Is(err, http.ErrServerClosed) {
+				err = nil
+				infoLog.Println("shutting down server")
+				return
+			}
+			return
+		}
+	}
+	return
+}
