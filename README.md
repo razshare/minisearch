@@ -11,7 +11,7 @@ Download the [migrate program and the server](https://github.com/razshare/minise
 Run the migrate program.
 
 ```sh
-./migrate-linux-amd64
+./migrate
 ```
 
 > [!NOTE]
@@ -21,7 +21,7 @@ Run the migrate program.
 Run the server.
 
 ```sh
-./serve-linux-amd64
+./serve
 ```
 
 > [!NOTE]
@@ -35,38 +35,14 @@ Run the server.
 Configure project.
 
 ```sh
-frizzante configure
+make configure
 ```
 
-Migrate development.
+Build project.
 
 ```sh
-frizzante migrate
+make build
 ```
 
-Start development.
-
-```sh
-frizzante dev
-```
-
-Build production.
-
-```sh
-frizzante build
-```
-    
 > [!NOTE]
-> This will create two executables, `.gen/bin/migrate` and `.gen/bin/serve`.
-
-Migrate production.
-
-```sh
-.gen/bin/migrate
-```
-
-Serve production.
-
-```sh
-.gen/bin/serve
-    ```
+> This will generate your binaries to `.gen/bin`.
