@@ -29,6 +29,9 @@ Run the server.
 
 # Get Started (Build From Source)
 
+> [!NOTE]
+> You will need the frizzante cli, for more details see the [official documentation](https://razshare.github.io/frizzante-docs/).
+
 Configure project.
 
 ```sh
