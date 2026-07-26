@@ -6,7 +6,7 @@ in [Go](https://go.dev/) and [Svelte](https://svelte.dev/) using
 
 # Get Started (Prebuilt Binaries)
 
-Download the [migrate program and the server](https://github.com/razshare/minisearch/releases)
+Download the [migrate and serve programs](https://github.com/razshare/minisearch/releases).
 
 Run the migrate program.
 
