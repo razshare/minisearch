@@ -24,12 +24,29 @@ func (q *Queries) AddResult(ctx context.Context, arg AddResultParams) error {
 	return err
 }
 
-const findResultsByDescription = `-- name: FindResultsByDescription :many
-select id, address, description from results where description like ?1
+const countResultsByDescription = `-- name: CountResultsByDescription :one
+select count(*) from results where description like ?1
 `
 
-func (q *Queries) FindResultsByDescription(ctx context.Context, description string) ([]Result, error) {
-	rows, err := q.db.QueryContext(ctx, findResultsByDescription, description)
+func (q *Queries) CountResultsByDescription(ctx context.Context, description string) (int64, error) {
+	row := q.db.QueryRowContext(ctx, countResultsByDescription, description)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
+const findResultsByDescription = `-- name: FindResultsByDescription :many
+select id, address, description from results where description like ?1 limit ?3 offset ?2
+`
+
+type FindResultsByDescriptionParams struct {
+	Description string `json:"description"`
+	Offset      int64  `json:"offset"`
+	Count       int64  `json:"count"`
+}
+
+func (q *Queries) FindResultsByDescription(ctx context.Context, arg FindResultsByDescriptionParams) ([]Result, error) {
+	rows, err := q.db.QueryContext(ctx, findResultsByDescription, arg.Description, arg.Offset, arg.Count)
 	if err != nil {
 		return nil, err
 	}

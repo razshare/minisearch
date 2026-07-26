@@ -4,6 +4,8 @@ export declare namespace search {
     export type Props = {
         Query: string
         Items: null|(schema.Result[])
+        PagesCounter: number
+        CurrentPage: number
     }
 }
 

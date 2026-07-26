@@ -9,8 +9,9 @@
         grid-template-areas:
             "searchbar"
             "separator"
-            "items";
-        grid-template-rows: auto auto 1fr;
+            "items"
+            "navigator";
+        grid-template-rows: auto auto 1fr auto;
         .searchbar {
             padding: 2rem;
             grid-area: searchbar;
@@ -30,6 +31,10 @@
                 }
             }
         }
+        .navigator {
+            grid-area: navigator;
+            padding: 2rem;
+        }
     }
 </style>
 
@@ -40,7 +45,7 @@
     import { keyof } from "$lib/scripts/core/keyof"
     import { type Form } from "$lib/types/server/main/lib/routes/search/form"
     import type { Props } from "$lib/types/server/main/lib/routes/search/props"
-    let { Query, Items }: Props = $props()
+    let { Query, Items, PagesCounter, CurrentPage }: Props = $props()
 </script>
 
 <Layout title="Search">
@@ -63,6 +68,19 @@
                 </div>
                 <hr />
             {/each}
+        </div>
+        <div class="navigator">
+            {#if CurrentPage <= 1}
+                <span>Previous</span>
+            {:else}
+                <a {...href(`?Query=${Query}&Page=${CurrentPage - 1}`)}>Previous</a>
+            {/if}
+            <span>{CurrentPage} of {PagesCounter}</span>
+            {#if CurrentPage + 1 >= PagesCounter}
+                <span>Next</span>
+            {:else}
+                <a {...href(`?Query=${Query}&Page=${CurrentPage + 1}`)}>Next</a>
+            {/if}
         </div>
     </div>
 </Layout>

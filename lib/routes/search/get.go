@@ -9,6 +9,7 @@ import (
 	"main/lib/core/views"
 	"main/lib/core/views/renders"
 	"main/lib/schema"
+	"math"
 	"net/http"
 	"strings"
 )
@@ -26,17 +27,39 @@ func Get(
 		var form Form
 		var items []schema.Result
 		_ = receive.Form(request, &form)
+		if form.Page <= 0 {
+			form.Page = 1
+		}
+		var pagesCounter int64 = 1
+		var currentPage int64 = form.Page
 		if form.Query != "" {
 			chunks := strings.Split(form.Query, " ")
 			query := "%" + strings.Join(chunks, "%") + "%"
 			infoLog.Printf("querying for %s\n", query)
-			items, _ = queries.FindResultsByDescription(request.Context(), query)
+			count, _ := queries.CountResultsByDescription(
+				request.Context(),
+				query,
+			)
+			pagesCounter = int64(math.Ceil(float64(count) / float64(10)))
+			if currentPage > pagesCounter {
+				currentPage = pagesCounter
+			}
+			items, _ = queries.FindResultsByDescription(
+				request.Context(),
+				schema.FindResultsByDescriptionParams{
+					Description: query,
+					Offset:      currentPage,
+					Count:       10,
+				},
+			)
 		}
 		_ = send.View(writer, request, render, views.View{
 			Name: "Search",
 			Props: Props{
-				Query: form.Query,
-				Items: items,
+				Query:        form.Query,
+				Items:        items,
+				PagesCounter: pagesCounter,
+				CurrentPage:  currentPage,
 			},
 		})
 	}
