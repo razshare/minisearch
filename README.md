@@ -6,11 +6,24 @@ in [Go](https://go.dev/) and [Svelte](https://svelte.dev/) using
 
 # Get Started (Prebuilt Binaries)
 
-1. Download the migrate program and the server.
-1. Run the migrate.
+Download the [migrate program and the server](https://github.com/razshare/minisearch/releases)
+
+Run the migrate program.
+
+```sh
+./migrate-linux-amd64
+```
+
 > [!NOTE]
 > This will create a `./source.sqlite` file, your database.
-1. Run the server.
+
+
+Run the server.
+
+```sh
+./serve-linux-amd64
+```
+
 > [!NOTE]
 > This will serve the website at `http://127.0.0.1:38123`.
 
