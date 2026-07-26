@@ -15,7 +15,7 @@
     import { action } from "$lib/scripts/core/action.svelte"
     import { href } from "$lib/scripts/core/href.svelte"
     import { keyof } from "$lib/scripts/core/keyof"
-    import { source } from "$lib/scripts/core/source.svelte"
+    import { source } from "$lib/scripts/core/source"
     import { type Form } from "$lib/types/server/main/lib/routes/index/form"
     import type { Progress } from "$lib/types/server/main/lib/routes/index/progress"
     let pending = $state(false)
