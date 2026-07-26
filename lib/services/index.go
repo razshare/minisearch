@@ -19,6 +19,7 @@ func Index(
 	address string,
 	depth int,
 	tracked map[string]string,
+	mutex *sync.Mutex,
 	onProgress func(current int, maximum int),
 ) (err error) {
 	var current int
@@ -42,6 +43,8 @@ func Index(
 	collector.OnHTML("title", func(element *colly.HTMLElement) {
 		maximum += 1
 		current += 1
+		mutex.Lock()
+		defer mutex.Unlock()
 		if _, exists := tracked[element.Text]; exists {
 			return
 		}
@@ -62,7 +65,7 @@ func Index(
 	var group sync.WaitGroup
 	for _, address := range addresses {
 		group.Go(func() {
-			Index(ctx, queries, infoLog, errorLog, address, depth-1, tracked, nil)
+			Index(ctx, queries, infoLog, errorLog, address, depth-1, tracked, mutex, nil)
 			if onProgress != nil {
 				group.Go(func() {
 					lock.Lock()

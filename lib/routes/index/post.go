@@ -13,6 +13,7 @@ import (
 	"main/lib/schema"
 	"main/lib/services"
 	"net/http"
+	"sync"
 )
 
 func Post(
@@ -27,6 +28,7 @@ func Post(
 		writer http.ResponseWriter,
 	) {
 		var form Form
+		var mutex sync.Mutex
 		_ = receive.Form(request, &form)
 		_ = services.Index(
 			request.Context(),
@@ -36,6 +38,7 @@ func Post(
 			form.Address,
 			form.Depth,
 			map[string]string{},
+			&mutex,
 			func(current int, maximum int) {
 				value, _ := json.Marshal(Progress{
 					Current: current,
