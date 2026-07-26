@@ -31,38 +31,39 @@ Run the server.
 
 Configure project.
 
-    ```sh
-    frizzante configure
-    ```
+```sh
+frizzante configure
+```
 
 Migrate development.
 
-    ```sh
-    frizzante migrate
-    ```
+```sh
+frizzante migrate
+```
 
 Start development.
 
-    ```sh
-    frizzante dev
-    ```
+```sh
+frizzante dev
+```
 
 Build production.
 
-    ```sh
-    frizzante build
-    ```
+```sh
+frizzante build
+```
     
-    This will create two executables, `.gen/bin/migrate` and `.gen/bin/serve`.
+> [!NOTE]
+> This will create two executables, `.gen/bin/migrate` and `.gen/bin/serve`.
 
 Migrate production.
 
-    ```sh
-    .gen/bin/migrate
-    ```
+```sh
+.gen/bin/migrate
+```
 
 Serve production.
 
-    ```sh
-    .gen/bin/serve
+```sh
+.gen/bin/serve
     ```
