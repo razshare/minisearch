@@ -5,7 +5,7 @@ test:
 	frizzante test
 
 build:
-	frizzante build
+	./build.sh
 
 dev:
 	frizzante dev
