@@ -1,5 +1,5 @@
-import { type Readable, readable } from "svelte/store"
 import { IS_BROWSER } from "$lib/scripts/core/is_browser.ts"
+import { type Readable, readable } from "svelte/store"
 export function source(path: string) {
     if (!IS_BROWSER) {
         return {

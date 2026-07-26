@@ -3,7 +3,7 @@ export type Props = search.Props
 export declare namespace search {
     export type Props = {
         Query: string
-        Items: null | schema.Result[]
+        Items: null|(schema.Result[])
     }
 }
 

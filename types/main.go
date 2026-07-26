@@ -11,4 +11,5 @@ func main() {
 	_ = types.Generate[search.Props]()
 	_ = types.Generate[search.Form]()
 	_ = types.Generate[index.Form]()
+	_ = types.Generate[index.Progress]()
 }

@@ -10,6 +10,7 @@ import (
 	"main/lib/core/servers"
 	"main/lib/core/ssr"
 	"main/lib/databases"
+	"main/lib/routes/events"
 	"main/lib/routes/fallback"
 	"main/lib/routes/index"
 	"main/lib/routes/search"
@@ -37,7 +38,7 @@ var appRoutes = []routes.Route{
 	},
 	{
 		Pattern: "GET /search",
-		Handler: search.Get(queries, render),
+		Handler: search.Get(queries, render, infoLog),
 	},
 	{
 		Pattern: "GET /index",
@@ -46,6 +47,10 @@ var appRoutes = []routes.Route{
 	{
 		Pattern: "POST /index",
 		Handler: index.Post(queries, infoLog, errorLog, render),
+	},
+	{
+		Pattern: "GET /events/index-progress",
+		Handler: events.GetIndexProgress(infoLog),
 	},
 }
 var startError = servers.Start(servers.StartOptions{

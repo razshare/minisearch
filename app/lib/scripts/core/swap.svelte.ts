@@ -45,6 +45,7 @@ export async function swap(target: HTMLAnchorElement | HTMLFormElement): Promise
             body[key] = `${value}`
             params.append(key, `${value}`)
         }
+
         method = form.method.toUpperCase() as "GET" | "POST"
         if (method === "GET") {
             const query = `?${params.toString()}`

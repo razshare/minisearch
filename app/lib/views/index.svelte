@@ -15,9 +15,12 @@
     import { action } from "$lib/scripts/core/action.svelte"
     import { href } from "$lib/scripts/core/href.svelte"
     import { keyof } from "$lib/scripts/core/keyof"
+    import { source } from "$lib/scripts/core/source.svelte"
     import { type Form } from "$lib/types/server/main/lib/routes/index/form"
-    let disabled = $state(false)
+    import type { Progress } from "$lib/types/server/main/lib/routes/index/progress"
+    let pending = $state(false)
     let error = $state("")
+    const progress = source("/events/index-progress").selectJson<Progress>()
 </script>
 
 <Layout title="index">
@@ -26,23 +29,26 @@
             method="POST"
             {...action("/index", {
                 onpending() {
-                    disabled = true
+                    pending = true
                 },
                 ondone() {
-                    disabled = false
+                    pending = false
                 },
                 onerror(errorLocal) {
-                    disabled = false
+                    pending = false
                     error = errorLocal.message
                 },
             })}
         >
             <fieldset role="group">
-                <input {disabled} name={keyof<Form>("Address")} type="text" placeholder="Address" />
-                <input {disabled} name={keyof<Form>("Depth")} type="number" placeholder="Depth" />
-                <input {disabled} type="submit" value="Index" />
+                <input disabled={pending} name={keyof<Form>("Address")} type="text" placeholder="Address" />
+                <input disabled={pending} name={keyof<Form>("Depth")} type="number" placeholder="Depth" />
+                <input disabled={pending} type="submit" value="Index" />
             </fieldset>
         </form>
+        {#if $progress && $progress.Current > 0 && $progress.Current !== $progress.Maximum}
+            <progress value={$progress.Current} max={$progress.Maximum} />
+        {/if}
         {#if error}
             <br />
             <span class="error">{error}</span>

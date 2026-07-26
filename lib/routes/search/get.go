@@ -1,6 +1,7 @@
 package search
 
 import (
+	"log"
 	"main/lib/core/receive"
 	"main/lib/core/routes"
 	"main/lib/core/scopes"
@@ -9,11 +10,13 @@ import (
 	"main/lib/core/views/renders"
 	"main/lib/schema"
 	"net/http"
+	"strings"
 )
 
 func Get(
 	queries *schema.Queries,
 	render renders.Render,
+	infoLog *log.Logger,
 ) routes.Handler {
 	return func(
 		scope scopes.Scope,
@@ -24,7 +27,10 @@ func Get(
 		var items []schema.Result
 		_ = receive.Form(request, &form)
 		if form.Query != "" {
-			items, _ = queries.FindResultsByDescription(request.Context(), "%"+form.Query+"%")
+			chunks := strings.Split(form.Query, " ")
+			query := "%" + strings.Join(chunks, "%") + "%"
+			infoLog.Printf("querying for %s\n", query)
+			items, _ = queries.FindResultsByDescription(request.Context(), query)
 		}
 		_ = send.View(writer, request, render, views.View{
 			Name: "Search",
