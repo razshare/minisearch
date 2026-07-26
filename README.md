@@ -14,18 +14,11 @@ Run the migrate program.
 ./migrate
 ```
 
-> [!NOTE]
-> This will create a `./source.sqlite` file, your database.
-
-
 Run the server.
 
 ```sh
 ./serve
 ```
-
-> [!NOTE]
-> This will serve the website at `http://127.0.0.1:38123`.
 
 # Get Started (Build From Source)
 
@@ -43,6 +36,3 @@ Build project.
 ```sh
 make build
 ```
-
-> [!NOTE]
-> This will generate your binaries to `.gen/bin`.
