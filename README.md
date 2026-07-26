@@ -1,25 +1,55 @@
 # What is this?
 
-This is a todo list application
+This is a very naive proof of concept search engine written 
+in [Go](https://go.dev/) and [Svelte](https://svelte.dev/) using 
+[Frizzante](https://github.com/razshare/frizzante).
 
-# Get Started
+# Get Started (Prebuilt Binaries)
+
+1. Download the migrate program and the server.
+1. Run the migrate.
+> [!NOTE]
+> This will create a `./source.sqlite` file, your database.
+1. Run the server.
+> [!NOTE]
+> This will serve the website at `http://127.0.0.1:38123`.
+
+# Get Started (Build From Source)
 
 Configure project.
 
-```sh
-frizzante --configure
-```
+    ```sh
+    frizzante configure
+    ```
 
-Start development mode.
+Migrate development.
 
-```sh
-frizzante --dev
-```
+    ```sh
+    frizzante migrate
+    ```
 
-Build.
+Start development.
 
-```sh
-frizzante --build
-```
+    ```sh
+    frizzante dev
+    ```
 
-This will create a `.gen/bin/app` standalone executable.
+Build production.
+
+    ```sh
+    frizzante build
+    ```
+    
+    This will create two executables, `.gen/bin/migrate` and `.gen/bin/serve`.
+
+Migrate production.
+
+    ```sh
+    .gen/bin/migrate
+    ```
+
+Serve production.
+
+    ```sh
+    .gen/bin/serve
+    ```

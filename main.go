@@ -57,6 +57,7 @@ var startError = servers.Start(servers.StartOptions{
 	ErrorLog: errorLog,
 	InfoLog:  infoLog,
 	Routes:   appRoutes,
+	Address:  "http://127.0.0.1:38123",
 })
 
 func main() {
